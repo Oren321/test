@@ -1,16 +1,18 @@
 local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/xHeptc/Kavo-UI-Library/main/source.lua"))()
 local Window = Library.CreateLib("Private Script", "DarkTheme")
- 
+
 --AutoTab
-local Auto = Window:NewTab("Auto")
-local AutoSection = Auto:NewSection("AutoStuff")
-local AutoBuy = Window:NewTab("AutoBuy")
-local AutoBuySection = AutoBuy:NewSection("AutoBuyStuff")
-local AutoUse = Window:NewTab("AutoUse")
-local AutoUseSection = AutoUse:NewSection("AutoUseStuff")
- 
---Toggles
-AutoSection:NewToggle("AutoRoll", "AutoRolls", function(v)
+local Auto = Window:NewTab("Auto Roll")
+local AutoRoll = Auto:NewSection("Auto Roll")
+local Auto2 = Window:NewTab("Auto Fish")
+local AutoFish = Auto2:NewSection("Auto Fish")
+local Auto3 = Window:NewTab("Auto Mine")
+local AutoMine = Auto3:NewSection("Auto Mine")
+local Auto4 = Window:NewTab("Auto Theive")
+local AutoTheive = Auto4:NewSection("Auto Theive")
+
+--AutoStuff
+AutoRoll:NewToggle("AutoRoll", "AutoRolls", function(v)
     getgenv().Eggs_Roll = v
     while true do
         if getgenv().Eggs_Roll == false then return end
@@ -18,8 +20,26 @@ AutoSection:NewToggle("AutoRoll", "AutoRolls", function(v)
         wait()
     end
 end)
- 
-AutoSection:NewToggle("AutoFish", "AutoFishs", function(v)
+
+AutoFish:NewToggle("AutoFish Default", "AutoFishs Default", function(v)
+    getgenv().AutoFish = v
+    while getgenv().AutoFish do
+        game:GetService("ReplicatedStorage").Network.Fishing_Fish:InvokeServer("Default")
+        game:GetService("ReplicatedStorage").Network.Fishing_Success:FireServer()
+        task.wait()
+    end
+end)
+
+AutoFish:NewToggle("AutoFish Ice", "AutoFishs Ice", function(v)
+    getgenv().AutoFish = v
+    while getgenv().AutoFish do
+        game:GetService("ReplicatedStorage").Network.Fishing_Fish:InvokeServer("Ice")
+        game:GetService("ReplicatedStorage").Network.Fishing_Success:FireServer()
+        task.wait()
+    end
+end)
+
+AutoFish:NewToggle("AutoFish Boating", "AutoFishs Boating", function(v)
     getgenv().AutoFish = v
     while getgenv().AutoFish do
         game:GetService("ReplicatedStorage").Network.Fishing_Fish:InvokeServer("Boating")
@@ -27,8 +47,99 @@ AutoSection:NewToggle("AutoFish", "AutoFishs", function(v)
         task.wait()
     end
 end)
- 
-AutoSection:NewToggle("AutoMine", "AutoMines", function(v)
+
+AutoMine:NewToggle("AutoMine Dirt", "AutoMines Dirt", function(v)
+    if v then
+        getgenv().AutoMine = true
+        while getgenv().AutoMine do
+            game:GetService("ReplicatedStorage").Network.Mining_SetState:InvokeServer(true)
+            game:GetService("ReplicatedStorage").Network.Mining_Attack:InvokeServer(6)
+            task.wait()
+        end
+    else  -- If the toggle is off
+        getgenv().AutoMine = false
+    end
+end)
+
+AutoMine:NewToggle("AutoMine Stone", "AutoMines Stone", function(v)
+    if v then
+        getgenv().AutoMine = true
+        while getgenv().AutoMine do
+            game:GetService("ReplicatedStorage").Network.Mining_SetState:InvokeServer(true)
+            game:GetService("ReplicatedStorage").Network.Mining_Attack:InvokeServer(5)
+            task.wait()
+        end
+    else  -- If the toggle is off
+        getgenv().AutoMine = false
+    end
+end)
+
+AutoMine:NewToggle("AutoMine Copper/Bronze", "AutoMines Copper/Bronze", function(v)
+    if v then
+        getgenv().AutoMine = true
+        while getgenv().AutoMine do
+            game:GetService("ReplicatedStorage").Network.Mining_SetState:InvokeServer(true)
+            game:GetService("ReplicatedStorage").Network.Mining_Attack:InvokeServer(3)
+            task.wait()
+        end
+    else  -- If the toggle is off
+        getgenv().AutoMine = false
+    end
+end)
+
+AutoMine:NewToggle("AutoMine Iron", "AutoMines Iron", function(v)
+    if v then
+        getgenv().AutoMine = true
+        while getgenv().AutoMine do
+            game:GetService("ReplicatedStorage").Network.Mining_SetState:InvokeServer(true)
+            game:GetService("ReplicatedStorage").Network.Mining_Attack:InvokeServer(2)
+            task.wait()
+        end
+    else  -- If the toggle is off
+        getgenv().AutoMine = false
+    end
+end)
+
+AutoMine:NewToggle("AutoMine Gold", "AutoMines Gold", function(v)
+    if v then
+        getgenv().AutoMine = true
+        while getgenv().AutoMine do
+            game:GetService("ReplicatedStorage").Network.Mining_SetState:InvokeServer(true)
+            game:GetService("ReplicatedStorage").Network.Mining_Attack:InvokeServer(1)
+            task.wait()
+        end
+    else  -- If the toggle is off
+        getgenv().AutoMine = false
+    end
+end)
+
+AutoMine:NewToggle("AutoMine Emerald", "AutoMines Emerald", function(v)
+    if v then
+        getgenv().AutoMine = true
+        while getgenv().AutoMine do
+            game:GetService("ReplicatedStorage").Network.Mining_SetState:InvokeServer(true)
+            game:GetService("ReplicatedStorage").Network.Mining_Attack:InvokeServer(4)
+            task.wait()
+        end
+    else  -- If the toggle is off
+        getgenv().AutoMine = false
+    end
+end)
+
+AutoMine:NewToggle("AutoMine Obsidian", "AutoMines Obsidian", function(v)
+    if v then
+        getgenv().AutoMine = true
+        while getgenv().AutoMine do
+            game:GetService("ReplicatedStorage").Network.Mining_SetState:InvokeServer(true)
+            game:GetService("ReplicatedStorage").Network.Mining_Attack:InvokeServer(10)
+            task.wait()
+        end
+    else  -- If the toggle is off
+        getgenv().AutoMine = false
+    end
+end)
+
+AutoMine:NewToggle("AutoMine Runic", "AutoMines Runic", function(v)
     if v then
         getgenv().AutoMine = true
         while getgenv().AutoMine do
@@ -36,27 +147,18 @@ AutoSection:NewToggle("AutoMine", "AutoMines", function(v)
             game:GetService("ReplicatedStorage").Network.Mining_Attack:InvokeServer(8)
             task.wait()
         end
-    else
+    else  -- If the toggle is off
         getgenv().AutoMine = false
     end
 end)
- 
-AutoSection:NewToggle("AutoThieve", "AutoThieves", function(state)
-    local player = game.Players.LocalPlayer
-    local character = player.Character
-    local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
- 
-    local targetPosition = game:GetService("ReplicatedStorage").__DIRECTORY.ThievingObjects["ThievingObject 8 | Royal Stall"].Model.Pad.PadGlow.Position
- 
-    humanoidRootPart.CFrame = CFrame.new(targetPosition)
-end)
 
-AutoSection:NewToggle("AutoThieve", "AutoThieves", function(state)
+AutoTheive:NewToggle("AutoThieve", "AutoThieves", function(state)
     local player = game.Players.LocalPlayer
     local character = player.Character
     local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
- 
+
     local targetPosition = game:GetService("ReplicatedStorage").__DIRECTORY.ThievingObjects["ThievingObject 8 | Royal Stall"].Model.Pad.PadGlow.Position
- 
+
+    -- Teleport the character
     humanoidRootPart.CFrame = CFrame.new(targetPosition)
 end)
