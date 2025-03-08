@@ -1,0 +1,62 @@
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/xHeptc/Kavo-UI-Library/main/source.lua"))()
+local Window = Library.CreateLib("Private Script", "DarkTheme")
+ 
+--AutoTab
+local Auto = Window:NewTab("Auto")
+local AutoSection = Auto:NewSection("AutoStuff")
+local AutoBuy = Window:NewTab("AutoBuy")
+local AutoBuySection = AutoBuy:NewSection("AutoBuyStuff")
+local AutoUse = Window:NewTab("AutoUse")
+local AutoUseSection = AutoUse:NewSection("AutoUseStuff")
+ 
+--Toggles
+AutoSection:NewToggle("AutoRoll", "AutoRolls", function(v)
+    getgenv().Eggs_Roll = v
+    while true do
+        if getgenv().Eggs_Roll == false then return end
+        game:GetService("ReplicatedStorage").Network.Eggs_Roll:InvokeServer()
+        wait()
+    end
+end)
+ 
+AutoSection:NewToggle("AutoFish", "AutoFishs", function(v)
+    getgenv().AutoFish = v
+    while getgenv().AutoFish do
+        game:GetService("ReplicatedStorage").Network.Fishing_Fish:InvokeServer("Boating")
+        game:GetService("ReplicatedStorage").Network.Fishing_Success:FireServer()
+        task.wait()
+    end
+end)
+ 
+AutoSection:NewToggle("AutoMine", "AutoMines", function(v)
+    if v then
+        getgenv().AutoMine = true
+        while getgenv().AutoMine do
+            game:GetService("ReplicatedStorage").Network.Mining_SetState:InvokeServer(true)
+            game:GetService("ReplicatedStorage").Network.Mining_Attack:InvokeServer(8)
+            task.wait()
+        end
+    else
+        getgenv().AutoMine = false
+    end
+end)
+ 
+AutoSection:NewToggle("AutoThieve", "AutoThieves", function(state)
+    local player = game.Players.LocalPlayer
+    local character = player.Character
+    local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+ 
+    local targetPosition = game:GetService("ReplicatedStorage").__DIRECTORY.ThievingObjects["ThievingObject 8 | Royal Stall"].Model.Pad.PadGlow.Position
+ 
+    humanoidRootPart.CFrame = CFrame.new(targetPosition)
+end)
+
+AutoSection:NewToggle("AutoThieve", "AutoThieves", function(state)
+    local player = game.Players.LocalPlayer
+    local character = player.Character
+    local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+ 
+    local targetPosition = game:GetService("ReplicatedStorage").__DIRECTORY.ThievingObjects["ThievingObject 8 | Royal Stall"].Model.Pad.PadGlow.Position
+ 
+    humanoidRootPart.CFrame = CFrame.new(targetPosition)
+end)
