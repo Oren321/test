@@ -1,1242 +1,159 @@
-local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/xHeptc/Kavo-UI-Library/main/source.lua"))()
-local Window = Library.CreateLib("Project Fred")
+--UI
+local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
+local SaveManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/SaveManager.lua"))()
+local InterfaceManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/InterfaceManager.lua"))()
 
---AutoTab
-local Event = Window:NewTab("Clover Event")
-local Event2 = Event:NewSection("Event")
-local Event3 = Event:NewSection("Auto Potions")
-local Event4 = Event:NewSection("Auto Charge Tokens")
-local Auto = Window:NewTab("Auto Roll")
-local AutoRoll = Auto:NewSection("Auto Roll")
-local Auto2 = Window:NewTab("Auto Fish")
-local AutoFish = Auto2:NewSection("Auto Fish")
-local AutoCollectFishermanLoot = Auto2:NewSection("Auto Collect Fisherman Loot")
-local Auto3 = Window:NewTab("Auto Mine")
-local AutoMine = Auto3:NewSection("Auto Mine")
-local Auto4 = Window:NewTab("Auto Theive")
-local AutoTheive = Auto4:NewSection("Auto Theive")
-local AutoBuy = Window:NewTab("Auto Buy")
-local AutoBuyMerchants = AutoBuy:NewSection("Merchants")
-local AutoUse = Window:NewTab("Auto Use")
-local AutoUse = AutoUse:NewSection("Auto Use")
-local Misc = Window:NewTab("Misc")
-local Misc2 = Misc:NewSection("AntiLag Will Freeze Game For A Second")
-local Settings = Window:NewTab("Settings")
-local Settings2 = Settings:NewSection("GUI Settings")
-local Credits = Window:NewTab("Credits")
-local Credits1 = Credits:NewSection("Fred - Programming & Design")
-local Credits2 = Credits:NewSection("Massy - Progamming & Branding")
+--Window
+local Window = Fluent:CreateWindow({
+    Title = "Private Script" .. Fluent.Version,
+    SubTitle = "By Fred And Massy",
+    TabWidth = 160,
+    Size = UDim2.fromOffset(580, 460),
+    Acrylic = true, -- The blur may be detectable, setting this to false disables blur entirely
+    Theme = "Darker",
+    MinimizeKey = Enum.KeyCode.LeftControl -- Used when theres no MinimizeKeybind
+})
 
+--Tabs
+local Tabs = {
+    Event = Window:AddTab({ Title = "Event", Icon = "" }),
+}
 
-Event2:NewToggle("Roll Clover Egg", "Auto Rolls The Clover Egg", function(v)
-    getgenv().Eggs_Roll2 = v
-    while true do
-        if getgenv().Eggs_Roll2 == false then return end
-        game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Clovers_HatchEgg"):InvokeServer()
-        task.wait(16)
-    end
-end)
+-- Event Toggles
+local Toggle = Tabs.Event:AddToggle("Event", 
+{
+    Title = "Auto Roll Clover Egg", 
+    Description = "",
+    Default = false,
+    Callback = function(state)
+        if state then
+            getgenv().Eggs_Roll2 = true
+            while getgenv().Eggs_Roll2 do
+                game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Clovers_HatchEgg"):InvokeServer()
+                task.wait(16)
+            end
+        else
+            getgenv().Eggs_Roll2 = false
+        end
+    end 
+})
 
-Event2:NewToggle("Auto Collect Hopper Loot", "Auto Collects The Loot Gained From The Hopper Every 30 Seconds", function(v)
-    getgenv().AutoFish = v
-    while getgenv().AutoFish do
-        game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Clovers_HopperClaim"):InvokeServer()
-        task.wait(30)
-    end
-end)
+local Toggle = Tabs.Event:AddToggle("Event", 
+{
+    Title = "Auto Collect Clovers", 
+    Description = "",
+    Default = false,
+    Callback = function(state)
+        if state then
+            getgenv().AutoCollectClover = true
+            while getgenv().AutoCollectClover do
+                local clovers = workspace.__THINGS.Clovers
 
-Event2:NewToggle("Auto Collect Clovers", "Auto Collects Clovers", function(v)
-    if v then
-        getgenv().AutoCollectClover = true
-        while getgenv().AutoCollectClover do
+                local function fireTouchInterest(part)
+                    local playerChar = game.Players.LocalPlayer.Character
+                    local primaryPart = playerChar and playerChar.PrimaryPart or part
+                    firetouchinterest(part, primaryPart, 0)
+                    firetouchinterest(part, primaryPart, 1)
+                end
 
-            local clovers = workspace.__THINGS.Clovers
-
-local function fireTouchInterest(part)
-    local playerChar = game.Players.LocalPlayer.Character
-    local primaryPart = playerChar and playerChar.PrimaryPart or part
-    firetouchinterest(part, primaryPart, 0)
-    firetouchinterest(part, primaryPart, 1)
-end
-
-while true do
-    for _, model in pairs(clovers:GetChildren()) do
-        local part = model:FindFirstChild("Part")
-        if part then
-            fireTouchInterest(part)
+                for _, model in pairs(clovers:GetChildren()) do
+                    local part = model:FindFirstChild("Part")
+                    if part then
+                        fireTouchInterest(part)
+                    end
+                end
+                task.wait()
+            end
+        else
+            getgenv().AutoCollectClover = false
         end
     end
-    task.wait()
-   end
-end)
-
-Event2:NewToggle("Auto Buy & Upgrade Patches", "Auto Upgrades Clover Patches", function(v)
-    if v then
-        getgenv().AutoCloverUpgrade = true
-        while getgenv().AutoCloverUpgrade do
-local args = {
-    [1] = "Patch_1",
-    [2] = "Clover"
-}
-
-game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Tycoons: Purchase"):InvokeServer(unpack(args))            
-				
-local args = {
-    [1] = "Patch_1_Farmer",
-    [2] = "Clover"
-}
-
-game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Tycoons: Purchase"):InvokeServer(unpack(args))
-
-local args = {
-    [1] = "Patch_1_Speed1",
-    [2] = "Clover"
-}
-
-game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Tycoons: Purchase"):InvokeServer(unpack(args))
-
-local args = {
-    [1] = "Patch_1_Speed2",
-    [2] = "Clover"
-}
-
-game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Tycoons: Purchase"):InvokeServer(unpack(args))
-
-local args = {
-    [1] = "Patch_1_Quality1",
-    [2] = "Clover"
-}
-
-game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Tycoons: Purchase"):InvokeServer(unpack(args))
-
-local args = {
-    [1] = "Patch_1_Quality2",
-    [2] = "Clover"
-}
-
-game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Tycoons: Purchase"):InvokeServer(unpack(args))
-
-local args = {
-    [1] = "Patch_1_Speed3",
-    [2] = "Clover"
-}
-
-game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Tycoons: Purchase"):InvokeServer(unpack(args))
-
-local args = {
-    [1] = "Patch_1_Quality3",
-    [2] = "Clover"
-}
-
-game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Tycoons: Purchase"):InvokeServer(unpack(args))
--- Patch 2
-local args = {
-    [1] = "Patch_2",
-    [2] = "Clover"
-}
-
-game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Tycoons: Purchase"):InvokeServer(unpack(args))            
-				
-local args = {
-    [1] = "Patch_2_Farmer",
-    [2] = "Clover"
-}
-
-game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Tycoons: Purchase"):InvokeServer(unpack(args))
-
-local args = {
-    [1] = "Patch_2_Speed1",
-    [2] = "Clover"
-}
-
-game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Tycoons: Purchase"):InvokeServer(unpack(args))
-
-local args = {
-    [1] = "Patch_2_Speed2",
-    [2] = "Clover"
-}
-
-game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Tycoons: Purchase"):InvokeServer(unpack(args))
-
-local args = {
-    [1] = "Patch_2_Quality1",
-    [2] = "Clover"
-}
-
-game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Tycoons: Purchase"):InvokeServer(unpack(args))
-
-local args = {
-    [1] = "Patch_2_Quality2",
-    [2] = "Clover"
-}
-
-game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Tycoons: Purchase"):InvokeServer(unpack(args))
-
-local args = {
-    [1] = "Patch_2_Speed3",
-    [2] = "Clover"
-}
-
-game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Tycoons: Purchase"):InvokeServer(unpack(args))
-
-local args = {
-    [1] = "Patch_2_Quality3",
-    [2] = "Clover"
-}
-
-game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Tycoons: Purchase"):InvokeServer(unpack(args))
--- Patch 3
-local args = {
-    [1] = "Patch_3",
-    [2] = "Clover"
-}
-
-game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Tycoons: Purchase"):InvokeServer(unpack(args))            
-				
-local args = {
-    [1] = "Patch_3_Farmer",
-    [2] = "Clover"
-}
-
-game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Tycoons: Purchase"):InvokeServer(unpack(args))
-
-local args = {
-    [1] = "Patch_3_Speed1",
-    [2] = "Clover"
-}
-
-game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Tycoons: Purchase"):InvokeServer(unpack(args))
-
-local args = {
-    [1] = "Patch_3_Speed2",
-    [2] = "Clover"
-}
-
-game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Tycoons: Purchase"):InvokeServer(unpack(args))
-
-local args = {
-    [1] = "Patch_3_Quality1",
-    [2] = "Clover"
-}
-
-game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Tycoons: Purchase"):InvokeServer(unpack(args))
-
-local args = {
-    [1] = "Patch_3_Quality2",
-    [2] = "Clover"
-}
-
-game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Tycoons: Purchase"):InvokeServer(unpack(args))
-
-local args = {
-    [1] = "Patch_3_Speed3",
-    [2] = "Clover"
-}
-
-game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Tycoons: Purchase"):InvokeServer(unpack(args))
-
-local args = {
-    [1] = "Patch_3_Quality3",
-    [2] = "Clover"
-}
-
-game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Tycoons: Purchase"):InvokeServer(unpack(args))
---Patch 4
-local args = {
-    [1] = "Patch_4",
-    [2] = "Clover"
-}
-
-game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Tycoons: Purchase"):InvokeServer(unpack(args))            
-				
-local args = {
-    [1] = "Patch_4_Farmer",
-    [2] = "Clover"
-}
-
-game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Tycoons: Purchase"):InvokeServer(unpack(args))
-
-local args = {
-    [1] = "Patch_4_Speed1",
-    [2] = "Clover"
-}
-
-game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Tycoons: Purchase"):InvokeServer(unpack(args))
-
-local args = {
-    [1] = "Patch_4_Speed2",
-    [2] = "Clover"
-}
-
-game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Tycoons: Purchase"):InvokeServer(unpack(args))
-
-local args = {
-    [1] = "Patch_4_Quality1",
-    [2] = "Clover"
-}
-
-game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Tycoons: Purchase"):InvokeServer(unpack(args))
-
-local args = {
-    [1] = "Patch_4_Quality2",
-    [2] = "Clover"
-}
-
-game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Tycoons: Purchase"):InvokeServer(unpack(args))
-
-local args = {
-    [1] = "Patch_4_Speed3",
-    [2] = "Clover"
-}
-
-game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Tycoons: Purchase"):InvokeServer(unpack(args))
-
-local args = {
-    [1] = "Patch_4_Quality3",
-    [2] = "Clover"
-}
-
-game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Tycoons: Purchase"):InvokeServer(unpack(args))
---Patch 5
-local args = {
-    [1] = "Patch_5",
-    [2] = "Clover"
-}
-
-game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Tycoons: Purchase"):InvokeServer(unpack(args))            
-				
-local args = {
-    [1] = "Patch_5_Farmer",
-    [2] = "Clover"
-}
-
-game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Tycoons: Purchase"):InvokeServer(unpack(args))
-
-local args = {
-    [1] = "Patch_5_Speed1",
-    [2] = "Clover"
-}
-
-game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Tycoons: Purchase"):InvokeServer(unpack(args))
-
-local args = {
-    [1] = "Patch_5_Speed2",
-    [2] = "Clover"
-}
-
-game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Tycoons: Purchase"):InvokeServer(unpack(args))
-
-local args = {
-    [1] = "Patch_5_Quality1",
-    [2] = "Clover"
-}
-
-game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Tycoons: Purchase"):InvokeServer(unpack(args))
-
-local args = {
-    [1] = "Patch_5_Quality2",
-    [2] = "Clover"
-}
-
-game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Tycoons: Purchase"):InvokeServer(unpack(args))
-
-local args = {
-    [1] = "Patch_5_Speed3",
-    [2] = "Clover"
-}
-
-game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Tycoons: Purchase"):InvokeServer(unpack(args))
-
-local args = {
-    [1] = "Patch_5_Quality3",
-    [2] = "Clover"
-}
-
-game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Tycoons: Purchase"):InvokeServer(unpack(args))
---Patch 6
-local args = {
-    [1] = "Patch_6",
-    [2] = "Clover"
-}
-
-game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Tycoons: Purchase"):InvokeServer(unpack(args))            
-				
-local args = {
-    [1] = "Patch_6_Farmer",
-    [2] = "Clover"
-}
-
-game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Tycoons: Purchase"):InvokeServer(unpack(args))
-
-local args = {
-    [1] = "Patch_6_Speed1",
-    [2] = "Clover"
-}
-
-game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Tycoons: Purchase"):InvokeServer(unpack(args))
-
-local args = {
-    [1] = "Patch_6_Speed2",
-    [2] = "Clover"
-}
-
-game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Tycoons: Purchase"):InvokeServer(unpack(args))
-
-local args = {
-    [1] = "Patch_6_Quality1",
-    [2] = "Clover"
-}
-
-game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Tycoons: Purchase"):InvokeServer(unpack(args))
-
-local args = {
-    [1] = "Patch_6_Quality2",
-    [2] = "Clover"
-}
-
-game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Tycoons: Purchase"):InvokeServer(unpack(args))
-
-local args = {
-    [1] = "Patch_6_Speed3",
-    [2] = "Clover"
-}
-
-game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Tycoons: Purchase"):InvokeServer(unpack(args))
-
-local args = {
-    [1] = "Patch_6_Quality3",
-    [2] = "Clover"
-}
-
-game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Tycoons: Purchase"):InvokeServer(unpack(args))
---Patch 7
-local args = {
-    [1] = "Patch_7",
-    [2] = "Clover"
-}
-
-game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Tycoons: Purchase"):InvokeServer(unpack(args))            
-				
-local args = {
-    [1] = "Patch_7_Farmer",
-    [2] = "Clover"
-}
-
-game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Tycoons: Purchase"):InvokeServer(unpack(args))
-
-local args = {
-    [1] = "Patch_7_Speed1",
-    [2] = "Clover"
-}
-
-game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Tycoons: Purchase"):InvokeServer(unpack(args))
-
-local args = {
-    [1] = "Patch_7_Speed2",
-    [2] = "Clover"
-}
-
-game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Tycoons: Purchase"):InvokeServer(unpack(args))
-
-local args = {
-    [1] = "Patch_7_Quality1",
-    [2] = "Clover"
-}
-
-game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Tycoons: Purchase"):InvokeServer(unpack(args))
-
-local args = {
-    [1] = "Patch_7_Quality2",
-    [2] = "Clover"
-}
-
-game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Tycoons: Purchase"):InvokeServer(unpack(args))
-
-local args = {
-    [1] = "Patch_7_Speed3",
-    [2] = "Clover"
-}
-
-game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Tycoons: Purchase"):InvokeServer(unpack(args))
-
-local args = {
-    [1] = "Patch_7_Quality3",
-    [2] = "Clover"
-}
-
-game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Tycoons: Purchase"):InvokeServer(unpack(args))
---Patch 8
-local args = {
-    [1] = "Patch_8",
-    [2] = "Clover"
-}
-
-game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Tycoons: Purchase"):InvokeServer(unpack(args))            
-				
-local args = {
-    [1] = "Patch_8_Farmer",
-    [2] = "Clover"
-}
-
-game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Tycoons: Purchase"):InvokeServer(unpack(args))
-
-local args = {
-    [1] = "Patch_8_Speed1",
-    [2] = "Clover"
-}
-
-game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Tycoons: Purchase"):InvokeServer(unpack(args))
-
-local args = {
-    [1] = "Patch_8_Speed2",
-    [2] = "Clover"
-}
-
-game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Tycoons: Purchase"):InvokeServer(unpack(args))
-
-local args = {
-    [1] = "Patch_8_Quality1",
-    [2] = "Clover"
-}
-
-game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Tycoons: Purchase"):InvokeServer(unpack(args))
-
-local args = {
-    [1] = "Patch_8_Quality2",
-    [2] = "Clover"
-}
-
-game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Tycoons: Purchase"):InvokeServer(unpack(args))
-
-local args = {
-    [1] = "Patch_8_Speed3",
-    [2] = "Clover"
-}
-
-game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Tycoons: Purchase"):InvokeServer(unpack(args))
-
-local args = {
-    [1] = "Patch_8_Quality3",
-    [2] = "Clover"
-}
-
-game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Tycoons: Purchase"):InvokeServer(unpack(args))
-            task.wait()
+})
+
+local Toggle = Tabs.Event:AddToggle("Event", 
+{
+    Title = "Auto Collect Hopper Loot", 
+    Description = "",
+    Default = false,
+    Callback = function(state)
+        if state then
+            getgenv().AutoFish = true
+            spawn(function()
+                while getgenv().AutoFish do
+                    game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Clovers_HopperClaim"):InvokeServer()
+                    task.wait(15)
+                end
+            end)
+        else
+            getgenv().AutoFish = false
         end
-    else  -- If the toggle is off
-        getgenv().AutoCloverUpgrade = false
-    end
-end)
+    end 
+})
 
-Event2:NewToggle("Auto Buy Clover Merchant", "Auto Buys Clover Merchant", function(v)
-    if v then
-        getgenv().AutoBuyCloverMerchant = true
-        while getgenv().AutoBuyCloverMerchant do
-        local args = {
-    [1] = "CloverMerchant",
-    [2] = 1
-}
-    game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("CustomMerchants_Purchase"):InvokeServer(unpack(args))
-        local args = {
-    [1] = "CloverMerchant",
-    [2] = 2
-}
-    game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("CustomMerchants_Purchase"):InvokeServer(unpack(args))
-        local args = {
-    [1] = "CloverMerchant",
-    [2] = 3
-}
-    game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("CustomMerchants_Purchase"):InvokeServer(unpack(args))
-        local args = {
-    [1] = "CloverMerchant",
-    [2] = 4
-}
-    game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("CustomMerchants_Purchase"):InvokeServer(unpack(args))
-        local args = {
-    [1] = "CloverMerchant",
-    [2] = 5
-}
-    game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("CustomMerchants_Purchase"):InvokeServer(unpack(args))
-        local args = {
-    [1] = "CloverMerchant",
-    [2] = 6
-}
-    game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("CustomMerchants_Purchase"):InvokeServer(unpack(args))
-    local args = {
-    [1] = "CloverMerchant",
-    [2] = 7
-    }
-    
-    game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("CustomMerchants_Purchase"):InvokeServer(unpack(args))
-    local args = {
-    [1] = "CloverMerchant",
-    [2] = 8
-    }
-    
-    game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("CustomMerchants_Purchase"):InvokeServer(unpack(args))
-        task.wait(30)
-    end
-else
-    getgenv().AutoBuyCloverMerchant = false
-    end
-end)
+local Toggle = Tabs.Event:AddToggle("Event", 
+{
+    Title = "Auto Clover Upgrade", 
+    Description = "",
+    Default = false,
+    Callback = function(state)
+        if state then
+            getgenv().AutoCloverUpgrade = true
+            spawn(function()
+                while getgenv().AutoCloverUpgrade do
+                    local args = { [1] = "Patch_1", [2] = "Clover" }
+                    game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Tycoons: Purchase"):InvokeServer(unpack(args))
 
-Event3:NewToggle("Auto Use Harvesting Speed Potion", "Auto Uses Harvesting Speed Potion", function(v)
-    getgenv().Consumables_Consume = v
-    while getgenv().Consumables_Consume do
-        local args = {
-            [1] = "5c9d7c8b323c494985773474b760ab7d",
-            [2] = 5
-        }
-        game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Consumables_Consume"):InvokeServer(unpack(args))
-        task.wait(600)
-    end
-end)
+                    local args = { [1] = "Patch_1_Farmer", [2] = "Clover" }
+                    game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Tycoons: Purchase"):InvokeServer(unpack(args))
 
-Event3:NewToggle("Auto Use Clover Power Potion", "Auto Uses Clover Power Potion", function(v)
-    getgenv().Consumables_Consume = v
-    while getgenv().Consumables_Consume do
-local args = {
-    [1] = "17674e60b22d4daf9b0e9c88fa7f7f78",
-    [2] = 5
-}
-game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Consumables_Consume"):InvokeServer(unpack(args))
-        task.wait(600)
-    end
-end)
+                    local args = { [1] = "Patch_1_Speed1", [2] = "Clover" }
+                    game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Tycoons: Purchase"):InvokeServer(unpack(args))
 
-Event3:NewToggle("Auto Use Clover Loot Potion", "Auto Uses Clover Loot Potion", function(v)
-    getgenv().Consumables_Consume = v
-    while getgenv().Consumables_Consume do
-local args = {
-    [1] = "d09392dfcd3d433080b998132f61817a",
-    [2] = 5
-}
-game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Consumables_Consume"):InvokeServer(unpack(args))
-        task.wait(600)
-    end
-end)
+                    local args = { [1] = "Patch_1_Speed2", [2] = "Clover" }
+                    game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Tycoons: Purchase"):InvokeServer(unpack(args))
 
-Event3:NewToggle("Auto Use Lucky Rain Potion", "Auto Uses Lucky Rain Potion", function(v)
-    getgenv().Consumables_Consume = v
-    while getgenv().Consumables_Consume do
-local args = {
-    [1] = "2a6fb7836eed4a1ca562b17a64c35196",
-    [2] = 1
-}
-game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Consumables_Consume"):InvokeServer(unpack(args))
-        task.wait(61)
-    end
-end)
+                    local args = { [1] = "Patch_1_Quality1", [2] = "Clover" }
+                    game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Tycoons: Purchase"):InvokeServer(unpack(args))
 
-Event4:NewToggle("Auto Use Instant Charge Token", "Auto Uses Instant Charge Token", function(v)
-    getgenv().Consumables_Consume = v
-    while getgenv().Consumables_Consume do
-local args = {
-    [1] = "ac6c80cca1b945df807d82176ed13c18",
-    [2] = 1
-}
-game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Consumables_Consume"):InvokeServer(unpack(args))
-        task.wait(10)
-    end
-end)
+                    local args = { [1] = "Patch_1_Quality2", [2] = "Clover" }
+                    game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Tycoons: Purchase"):InvokeServer(unpack(args))
 
-Event4:NewToggle("Auto Use Huge Instant Charge Token", "Auto Uses The Huge Instant Charge Token", function(v)
-    getgenv().Consumables_Consume = v
-    while getgenv().Consumables_Consume do
-local args = {
-    [1] = "56054a58f55c4099a508e8acf262276a",
-    [2] = 1
-}
-game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Consumables_Consume"):InvokeServer(unpack(args))
-        task.wait(10)
-    end
-end)
+                    local args = { [1] = "Patch_1_Speed3", [2] = "Clover" }
+                    game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Tycoons: Purchase"):InvokeServer(unpack(args))
 
---AutoRoll Toggle
- AutoRoll:NewToggle("Auto Roll", "AutoRolls", function(v)
-     getgenv().Eggs_Roll = v
-     while true do
-         if getgenv().Eggs_Roll == false then return end
-         game:GetService("ReplicatedStorage").Network.Eggs_Roll:InvokeServer()
-         task.wait()
-     end
- end)
+                    local args = { [1] = "Patch_1_Quality3", [2] = "Clover" }
+                    game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Tycoons: Purchase"):InvokeServer(unpack(args))
 
---AutoFish Toggle
-AutoFish:NewToggle("Auto Fish Default", "Starter Fishing Area", function(v)
-    getgenv().AutoFish = v
-    while getgenv().AutoFish do
-        game:GetService("ReplicatedStorage").Network.Fishing_Fish:InvokeServer("Default")
-        game:GetService("ReplicatedStorage").Network.Fishing_Success:FireServer()
-        task.wait()
-    end
-end)
+                    local args = { [1] = "Patch_2", [2] = "Clover" }
+                    game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Tycoons: Purchase"):InvokeServer(unpack(args))
+                    
 
-AutoFish:NewToggle("Auto Fish Ice", "Ice Fishing Area", function(v)
-    getgenv().AutoFish = v
-    while getgenv().AutoFish do
-        game:GetService("ReplicatedStorage").Network.Fishing_Fish:InvokeServer("Ice")
-        game:GetService("ReplicatedStorage").Network.Fishing_Success:FireServer()
-        task.wait()
-    end
-end)
-
-AutoFish:NewToggle("Auto Fish Corrupted", "Corrupted Fishing Area", function(v)
-    getgenv().AutoFish = v
-    while getgenv().AutoFish do
-        game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Fishing_Fish"):InvokeServer("Corrupted")
-        game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Fishing_Success"):FireServer()        
-        task.wait()
-    end
-end)
-
-AutoFish:NewToggle("Auto Fish Boat", "Boating Fishing Area", function(v)
-    getgenv().AutoFish = v
-    while getgenv().AutoFish do
-        game:GetService("ReplicatedStorage").Network.Fishing_Fish:InvokeServer("Boating")
-        game:GetService("ReplicatedStorage").Network.Fishing_Success:FireServer()
-        task.wait()
-    end
-end)
-
-AutoFish:NewToggle("Auto Fish Kraken", "Kraken Fishing Area", function(v)
-    getgenv().AutoFish = v
-    while getgenv().AutoFish do
-        game:GetService("ReplicatedStorage").Network.Fishing_Fish:InvokeServer("Kraken")
-        game:GetService("ReplicatedStorage").Network.Fishing_Success:FireServer()
-        task.wait()
-    end
-end)
-
-AutoCollectFishermanLoot:NewToggle("Auto Collect Fisherman Loot", "Auto Collects The Loot Gained From The Fisherman Every 30 Seconds", function(v)
-    getgenv().AutoFish = v
-    while getgenv().AutoFish do
-        game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Fishing_FishermanClaim"):InvokeServer()
-        task.wait(30)
-    end
-end)
-
---AutoMine Toggle
-AutoMine:NewToggle("Auto Mine Dirt", "Auto Mines Dirt", function(v)
-    if v then
-        getgenv().AutoMine = true
-        while getgenv().AutoMine do
-            game:GetService("ReplicatedStorage").Network.Mining_SetState:InvokeServer(true)
-            game:GetService("ReplicatedStorage").Network.Mining_Attack:InvokeServer(6)
-            task.wait()
+                    task.wait(1)
+                end
+            end)
+        else
+            getgenv().AutoCloverUpgrade = false
         end
-    else  -- If the toggle is off
-        getgenv().AutoMine = false
-    end
-end)
+    end 
+})
 
-AutoMine:NewToggle("Auto Mine Stone", "Auto Mines Stone", function(v)
-    if v then
-        getgenv().AutoMine = true
-        while getgenv().AutoMine do
-            game:GetService("ReplicatedStorage").Network.Mining_SetState:InvokeServer(true)
-            game:GetService("ReplicatedStorage").Network.Mining_Attack:InvokeServer(5)
-            task.wait()
+local Toggle = Tabs.Event:AddToggle("Event", 
+{
+    Title = "Auto Buy Clover Merchant", 
+    Description = "", 
+    Default = false,
+    Callback = function(state)
+        if state then
+            getgenv().AutoBuyCloverMerchant = true
+            while getgenv().AutoBuyCloverMerchant do
+                for i = 1, 8 do
+                    local args = { [1] = "CloverMerchant", [2] = i }
+                    game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("CustomMerchants_Purchase"):InvokeServer(unpack(args))
+                end
+                task.wait(30)
+            end
+        else
+            getgenv().AutoBuyCloverMerchant = false
         end
-    else  -- If the toggle is off
-        getgenv().AutoMine = false
     end
-end)
-
-AutoMine:NewToggle("Auto Mine Copper/Bronze", "Auto Mines Copper/Bronze", function(v)
-    if v then
-        getgenv().AutoMine = true
-        while getgenv().AutoMine do
-            game:GetService("ReplicatedStorage").Network.Mining_SetState:InvokeServer(true)
-            game:GetService("ReplicatedStorage").Network.Mining_Attack:InvokeServer(3)
-            task.wait()
-        end
-    else  -- If the toggle is off
-        getgenv().AutoMine = false
-    end
-end)
-
-AutoMine:NewToggle("Auto Mine Iron", "Auto Mines Iron", function(v)
-    if v then
-        getgenv().AutoMine = true
-        while getgenv().AutoMine do
-            game:GetService("ReplicatedStorage").Network.Mining_SetState:InvokeServer(true)
-            game:GetService("ReplicatedStorage").Network.Mining_Attack:InvokeServer(2)
-            task.wait()
-        end
-    else  -- If the toggle is off
-        getgenv().AutoMine = false
-    end
-end)
-
-AutoMine:NewToggle("Auto Mine Gold", "Auto Mines Gold", function(v)
-    if v then
-        getgenv().AutoMine = true
-        while getgenv().AutoMine do
-            game:GetService("ReplicatedStorage").Network.Mining_SetState:InvokeServer(true)
-            game:GetService("ReplicatedStorage").Network.Mining_Attack:InvokeServer(1)
-            task.wait()
-        end
-    else  -- If the toggle is off
-        getgenv().AutoMine = false
-    end
-end)
-
-AutoMine:NewToggle("Auto Mine Emerald", "Auto Mines Emerald", function(v)
-    if v then
-        getgenv().AutoMine = true
-        while getgenv().AutoMine do
-            game:GetService("ReplicatedStorage").Network.Mining_SetState:InvokeServer(true)
-            game:GetService("ReplicatedStorage").Network.Mining_Attack:InvokeServer(4)
-            task.wait()
-        end
-    else  -- If the toggle is off
-        getgenv().AutoMine = false
-    end
-end)
-
-AutoMine:NewToggle("Auto Mine Obsidian", "Auto Mines Obsidian", function(v)
-    if v then
-        getgenv().AutoMine = true
-        while getgenv().AutoMine do
-            game:GetService("ReplicatedStorage").Network.Mining_SetState:InvokeServer(true)
-            game:GetService("ReplicatedStorage").Network.Mining_Attack:InvokeServer(10)
-            task.wait()
-        end
-    else  -- If the toggle is off
-        getgenv().AutoMine = false
-    end
-end)
-
-AutoMine:NewToggle("Auto Mine Runic", "Auto Mines Runic", function(v)
-    if v then
-        getgenv().AutoMine = true
-        while getgenv().AutoMine do
-            game:GetService("ReplicatedStorage").Network.Mining_SetState:InvokeServer(true)
-            game:GetService("ReplicatedStorage").Network.Mining_Attack:InvokeServer(8)
-            task.wait()
-        end
-    else  -- If the toggle is off
-        getgenv().AutoMine = false
-    end
-end)
-
-AutoMine:NewToggle("Auto Mine Magma", "Auto Mines Magma", function(v)
-    if v then
-        getgenv().AutoMine = true
-        while getgenv().AutoMine do
-            game:GetService("ReplicatedStorage").Network.Mining_SetState:InvokeServer(true)
-            game:GetService("ReplicatedStorage").Network.Mining_Attack:InvokeServer(11)
-            task.wait()
-        end
-    else  -- If the toggle is off
-        getgenv().AutoMine = false
-    end
-end)
-
---Thieving Toggles
-AutoTheive:NewButton("Busted Shack", "AutoThieves Busted Stall", function()
-    local player = game.Players.LocalPlayer
-    local character = player.Character
-    local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
-
-    local targetPosition = game:GetService("ReplicatedStorage").__DIRECTORY.ThievingObjects["ThievingObject 1 | Busted Shack"].Model.Pad.PadGlow.Position
-
-    humanoidRootPart.CFrame = CFrame.new(targetPosition)
-end)
-
-AutoTheive:NewButton("Wooden Stall", "AutoThieves Wooden Stall", function()
-    local player = game.Players.LocalPlayer
-    local character = player.Character
-    local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
-
-    local targetPosition = game:GetService("ReplicatedStorage").__DIRECTORY.ThievingObjects["ThievingObject 2 | Wooden Stall"].Model.Pad.PadGlow.Position
-
-    humanoidRootPart.CFrame = CFrame.new(targetPosition)
-end)
-
-AutoTheive:NewButton("Stone Stall", "AutoThieves Stone Stall", function()
-    local player = game.Players.LocalPlayer
-    local character = player.Character
-    local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
-
-    local targetPosition = game:GetService("ReplicatedStorage").__DIRECTORY.ThievingObjects["ThievingObject 3 | Stone Stall"].Model.Pad.PadGlow.Position
-
-    humanoidRootPart.CFrame = CFrame.new(targetPosition)
-end)
-
-AutoTheive:NewButton("Marble Stall", "AutoThieves Marble Stall", function()
-    local player = game.Players.LocalPlayer
-    local character = player.Character
-    local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
-
-    local targetPosition = game:GetService("ReplicatedStorage").__DIRECTORY.ThievingObjects["ThievingObject 4 | Marble Stall"].Model.Pad.PadGlow.Position
-
-    humanoidRootPart.CFrame = CFrame.new(targetPosition)
-end)
-
-AutoTheive:NewButton("Bronze Stall", "AutoThieves Bronze Stall", function()
-    local player = game.Players.LocalPlayer
-    local character = player.Character
-    local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
-
-    local targetPosition = game:GetService("ReplicatedStorage").__DIRECTORY.ThievingObjects["ThievingObject 5 | Bronze Stall"].Model.Pad.PadGlow.Position
-
-    humanoidRootPart.CFrame = CFrame.new(targetPosition)
-end)
-
-AutoTheive:NewButton("Advanced Stall", "AutoThieves Advanced Stall", function()
-    local player = game.Players.LocalPlayer
-    local character = player.Character
-    local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
-
-    local targetPosition = game:GetService("ReplicatedStorage").__DIRECTORY.ThievingObjects["ThievingObject 6 | Advanced Stall"].Model.Pad.PadGlow.Position
-
-    humanoidRootPart.CFrame = CFrame.new(targetPosition)
-end)
-
-AutoTheive:NewButton("Golden Stall", "AutoThieves Golden Stall", function()
-    local player = game.Players.LocalPlayer
-    local character = player.Character
-    local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
-
-    local targetPosition = game:GetService("ReplicatedStorage").__DIRECTORY.ThievingObjects["ThievingObject 7 | Golden Stall"].Model.Pad.PadGlow.Position
-
-    humanoidRootPart.CFrame = CFrame.new(targetPosition)
-end)
-
-AutoTheive:NewButton("Royal Stall", "AutoThieves Royal Stall", function()
-    local player = game.Players.LocalPlayer
-    local character = player.Character
-    local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
-
-    local targetPosition = game:GetService("ReplicatedStorage").__DIRECTORY.ThievingObjects["ThievingObject 8 | Royal Stall"].Model.Pad.PadGlow.Position
-
-    humanoidRootPart.CFrame = CFrame.new(targetPosition)
-end)
-
-AutoTheive:NewButton("Hacker Stall", "AutoThieves Hacker Stall", function()
-    local player = game.Players.LocalPlayer
-    local character = player.Character
-    local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
-
-    local targetPosition = game:GetService("ReplicatedStorage").__DIRECTORY.ThievingObjects["ThievingObject 9 | Hacker Stall"].Model.Pad.PadGlow.Position
-
-    humanoidRootPart.CFrame = CFrame.new(targetPosition)
-end)
-
---AutoBuy
-AutoBuyMerchants:NewToggle("Auto Buy Vending Machine", "Buys Everything From The Vending Machine", function(v)
-    if v then
-        getgenv().AutoBuyVendingMachine = true
-        while getgenv().AutoBuyVendingMachine do
-            local args = {
-            [1] = "PotionVendingMachine"
-            }
-            game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("VendingMachines_Purchase"):InvokeServer(unpack(args))
-            task.wait(40)
-        end
-    else  -- If the toggle is off
-        getgenv().AutoBuyVendingMachine = false
-    end
-end)
-
-AutoBuyMerchants:NewToggle("Auto Buy Standard Merchant", "Auto Buys Standard Merchant", function(v)
-    if v then
-        getgenv().AutoBuyStandardMerchant = true
-        while getgenv().AutoBuyStandardMerchant do
-        local args = {
-    [1] = "StandardMerchant",
-    [2] = 1
-}
-
-game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("CustomMerchants_Purchase"):InvokeServer(unpack(args))
-local args = {
-    [1] = "StandardMerchant",
-    [2] = 2
-}
-
-game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("CustomMerchants_Purchase"):InvokeServer(unpack(args))
-local args = {
-    [1] = "StandardMerchant",
-    [2] = 3
-}
-
-game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("CustomMerchants_Purchase"):InvokeServer(unpack(args))
-local args = {
-    [1] = "StandardMerchant",
-    [2] = 4
-}
-
-game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("CustomMerchants_Purchase"):InvokeServer(unpack(args))
-local args = {
-    [1] = "StandardMerchant",
-    [2] = 5
-}
-
-game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("CustomMerchants_Purchase"):InvokeServer(unpack(args))
-local args = {
-    [1] = "StandardMerchant",
-    [2] = 6
-}
-
-game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("CustomMerchants_Purchase"):InvokeServer(unpack(args))
-        task.wait(30)
-    end
-else
-        getgenv().AutoBuyStandardMerchant = false
-    end
-end)
-
-AutoBuyMerchants:NewToggle("Auto Buy Fishing Merchant", "Buys Everything From The Fishing Merchant", function(v)
-    if v then
-        getgenv().AutoBuyFishingMerchant = true
-        while getgenv().AutoBuyFishingMerchant do
-        local args = {
-    [1] = "FishingMerchant",
-    [2] = 1
-}
-    game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("CustomMerchants_Purchase"):InvokeServer(unpack(args))
-        local args = {
-    [1] = "FishingMerchant",
-    [2] = 2
-}
-    game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("CustomMerchants_Purchase"):InvokeServer(unpack(args))
-        local args = {
-    [1] = "FishingMerchant",
-    [2] = 3
-}
-    game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("CustomMerchants_Purchase"):InvokeServer(unpack(args))
-        local args = {
-    [1] = "FishingMerchant",
-    [2] = 4
-}
-    game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("CustomMerchants_Purchase"):InvokeServer(unpack(args))
-        local args = {
-    [1] = "FishingMerchant",
-    [2] = 5
-}
-    game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("CustomMerchants_Purchase"):InvokeServer(unpack(args))
-        local args = {
-    [1] = "FishingMerchant",
-    [2] = 6
-}
-    game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("CustomMerchants_Purchase"):InvokeServer(unpack(args))
-        task.wait(30)
-    end
-else
-        getgenv().AutoBuyFishingMerchant = false
-    end
-end)
-
-AutoBuyMerchants:NewToggle("Auto Buy Ice Merchant", "Auto Buys Ice Merchant", function(v)
-    if v then
-        getgenv().AutoBuyIceFishingMerchant = true
-        while getgenv().AutoBuyIceFishingMerchant do
-        local args = {
-    [1] = "IceFishingMerchant",
-    [2] = 1
-}
-    game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("CustomMerchants_Purchase"):InvokeServer(unpack(args))
-        local args = {
-    [1] = "IceFishingMerchant",
-    [2] = 2
-}
-    game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("CustomMerchants_Purchase"):InvokeServer(unpack(args))
-        local args = {
-    [1] = "IceFishingMerchant",
-    [2] = 3
-}
-    game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("CustomMerchants_Purchase"):InvokeServer(unpack(args))
-        local args = {
-    [1] = "IceFishingMerchant",
-    [2] = 4
-}
-    game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("CustomMerchants_Purchase"):InvokeServer(unpack(args))
-        local args = {
-    [1] = "IceFishingMerchant",
-    [2] = 5
-}
-    game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("CustomMerchants_Purchase"):InvokeServer(unpack(args))
-        local args = {
-    [1] = "IceFishingMerchant",
-    [2] = 6
-}
-    game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("CustomMerchants_Purchase"):InvokeServer(unpack(args))
-        task.wait(30)
-    end
-else
-        getgenv().AutoBuyIceFishingMerchant = false
-    end
-end)
-
-AutoBuyMerchants:NewToggle("Auto Buy Mining Merchant", "Auto Buys Mining Merchant", function(v)
-    if v then
-        getgenv().AutoBuyMiningMerchant = true
-        while getgenv().AutoBuyMiningMerchant do
-        local args = {
-    [1] = "MiningMerchant",
-    [2] = 1
-}
-    game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("CustomMerchants_Purchase"):InvokeServer(unpack(args))
-        local args = {
-    [1] = "MiningMerchant",
-    [2] = 2
-}
-    game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("CustomMerchants_Purchase"):InvokeServer(unpack(args))
-        local args = {
-    [1] = "MiningMerchant",
-    [2] = 3
-}
-    game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("CustomMerchants_Purchase"):InvokeServer(unpack(args))
-        local args = {
-    [1] = "MiningMerchant",
-    [2] = 4
-}
-    game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("CustomMerchants_Purchase"):InvokeServer(unpack(args))
-        local args = {
-    [1] = "MiningMerchant",
-    [2] = 5
-}
-    game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("CustomMerchants_Purchase"):InvokeServer(unpack(args))
-        local args = {
-    [1] = "MiningMerchant",
-    [2] = 6
-}
-    game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("CustomMerchants_Purchase"):InvokeServer(unpack(args))
-    local args = {
-    [1] = "MiningMerchant",
-    [2] = 7
-    }
-    
-    game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("CustomMerchants_Purchase"):InvokeServer(unpack(args))
-    local args = {
-    [1] = "MiningMerchant",
-    [2] = 8
-    }
-    
-    game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("CustomMerchants_Purchase"):InvokeServer(unpack(args))
-        task.wait(30)
-    end
-else
-    getgenv().AutoBuyMiningMerchant = false
-    end
-end)
-
-AutoBuyMerchants:NewToggle("Auto Buy BlackMarket Merchant", "Auto Buys BlackMarket Merchant", function(v)
-    if v then
-        getgenv().AutoBuyBlackMarketMerchant = true
-        while getgenv().AutoBuyBlackMarketMerchant do
-        local args = {
-    [1] = "BlackMarketMerchant",
-    [2] = 1
-}
-
-game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("CustomMerchants_Purchase"):InvokeServer(unpack(args))
-local args = {
-    [1] = "BlackMarketMerchant",
-    [2] = 2
-}
-
-game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("CustomMerchants_Purchase"):InvokeServer(unpack(args))
-local args = {
-    [1] = "BlackMarketMerchant",
-    [2] = 3
-}
-
-game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("CustomMerchants_Purchase"):InvokeServer(unpack(args))
-local args = {
-    [1] = "BlackMarketMerchant",
-    [2] = 4
-}
-
-game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("CustomMerchants_Purchase"):InvokeServer(unpack(args))
-local args = {
-    [1] = "BlackMarketMerchant",
-    [2] = 5
-}
-
-game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("CustomMerchants_Purchase"):InvokeServer(unpack(args))
-local args = {
-    [1] = "BlackMarketMerchant",
-    [2] = 6
-}
-
-game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("CustomMerchants_Purchase"):InvokeServer(unpack(args))
-local args = {
-    [1] = "BlackMarketMerchant",
-    [2] = 7
-}
-
-game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("CustomMerchants_Purchase"):InvokeServer(unpack(args))
-local args = {
-    [1] = "BlackMarketMerchant",
-    [2] = 8
-}
-
-    game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("CustomMerchants_Purchase"):InvokeServer(unpack(args))
-        task.wait(30)
-    end
-else
-        getgenv().AutoBuyBlackMarketMerchant = false
-    end
-end)
-
-Misc2:NewButton("AntiLag", "AntiLag Will Freeze Game For A Second", function()
-loadstring(game:HttpGet("https://raw.githubusercontent.com/Oren321/AntiLag/refs/heads/main/OpenSourced", true))()
-end)
-
-Misc2:NewButton("HideFromPlayers", "HidesFromPlayers", function()
-    local platformName = "TeleportPlatform"
-    
-    -- Check if the platform already exists
-    local existingPlatform = game.Workspace:FindFirstChild(platformName)
-    if existingPlatform then
-        existingPlatform:Destroy() -- Remove the existing platform
-        return
-    end
-
-    -- Create a new platform
-    local part = Instance.new("Part")
-    part.Name = platformName
-    part.Size = Vector3.new(70, 1.2, 70)
-    part.CFrame = CFrame.new(44.14292907714844, -80, -16.36163330078125)
-	part.Color = Color3.fromRGB(28, 29, 34) 
-	part.Material = Enum.Material.SmoothPlastic 
-    part.Anchored = true
-    part.Parent = game.Workspace
-	writefile("ProjectFred.png", game:HttpGet("https://raw.githubusercontent.com/ProjectFred/Project-Fred/refs/heads/main/ProjectFred.png"))
-
-local logo = getcustomasset("ProjectFred.png")
-
-local teleportPlatform = workspace:FindFirstChild("TeleportPlatform")
-    
-    local faces = {
-        Enum.NormalId.Top,
-        Enum.NormalId.Bottom,
-        Enum.NormalId.Front,
-        Enum.NormalId.Back,
-        Enum.NormalId.Left,
-        Enum.NormalId.Right
-    }
-
-    for _, face in ipairs(faces) do
-        local decal = Instance.new("Decal")
-        decal.Texture = logo  
-        decal.Face = face  
-        decal.Parent = teleportPlatform  
-    end
-
-
-
-    -- Teleport the player to the part's position
-    local player = game.Players.LocalPlayer
-    if player and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
-        player.Character.HumanoidRootPart.CFrame = part.CFrame + Vector3.new(0, 3, 0) -- Offset to avoid getting stuck in the part
-    end
-end)
-
-Settings2:NewKeybind("Toggle UI", "Toggle the gui", Enum.KeyCode.RightShift, function()
-	Library:ToggleUI()
-end)
+})
