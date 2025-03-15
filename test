@@ -37,27 +37,35 @@ Event2:NewToggle("Roll Clover Egg", "Auto Rolls The Clover Egg", function(v)
     end
 end)
 
-Event2:NewToggle("Auto Collect Hopper Loot", "Auto Collects The Loot Gained From The Hopper Every 30 Seconds", function(v)
-    getgenv().AutoFish = v
-    while getgenv().AutoFish do
-        game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Clovers_HopperClaim"):InvokeServer()
-        task.wait(30)
-    end
-end)
-
 Event2:NewToggle("Auto Collect Clovers", "Auto Collects Clovers", function(v)
     if v then
         getgenv().AutoCollectClover = true
+        local clovers = workspace:FindFirstChild("__THINGS") and workspace.__THINGS:FindFirstChild("Clovers")
+
+        if not clovers then
+            warn("Clovers not found!")
+            return
+        end
+
+        local function fireTouchInterest(part)
+            local playerChar = game.Players.LocalPlayer.Character or game.Players.LocalPlayer.CharacterAdded:Wait()
+            local primaryPart = playerChar and playerChar.PrimaryPart or part
+            
+            firetouchinterest(part, primaryPart, 0)
+            firetouchinterest(part, primaryPart, 1)
+        end
+
         while getgenv().AutoCollectClover do
-Event2:NewToggle("Auto Collect Hopper Loot", "Auto Collects The Loot Gained From The Hopper Every 30 Seconds", function(v)
-    getgenv().AutoFish = v
-    
-    while getgenv().AutoFish do
-        game:GetService("ReplicatedStorage")
-            :WaitForChild("Network")
-            :WaitForChild("Clovers_HopperClaim")
-            :InvokeServer()
-        task.wait(30)
+            for _, model in pairs(clovers:GetChildren()) do
+                local part = model:FindFirstChild("Part")
+                if part then
+                    fireTouchInterest(part)
+                end
+            end
+            task.wait(0.1)
+        end
+    else
+        getgenv().AutoCollectClover = false
     end
 end)
 
