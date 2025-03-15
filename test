@@ -157,3 +157,18 @@ local Toggle = Tabs.Event:AddToggle("Event",
         end
     end
 })
+
+local MultiDropdown = Tab:AddDropdown("MultiDropdown", {
+    Title = "Dropdown",
+    Description = "You can select multiple values.",
+    Values = {"one", "two", "three", "four", "five", "six", "seven", "eight"},
+    Multi = true,
+    Default = {"eight"},
+    Callback = function(selectedValues)
+       -- Check if "one" is selected
+       if table.find(selectedValues, "one") then
+          print("You selected number one!")
+       end
+    end
+ })
+ 
