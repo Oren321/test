@@ -149,8 +149,8 @@ local Toggle = Tabs.Event:AddToggle("Event",
                 getgenv().AutoBuyCloverMerchant = true
                 spawn(function()
                     while getgenv().AutoBuyCloverMerchant do
-                        for i = 1, 6 do  -- Loop through stall numbers 1 to 6
-                            for j = 1, 3 do  -- Loop to buy 3 times from each stall
+                        for i = 1, 6 do
+                            for j = 1, 3 do
                                 local args = {
                                     [1] = "CloverMerchant",
                                     [2] = i
@@ -158,7 +158,7 @@ local Toggle = Tabs.Event:AddToggle("Event",
                                 game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("CustomMerchants_Purchase"):InvokeServer(unpack(args))
                             end
                         end
-                        wait(30)  -- Wait for 30 seconds before running the loop again
+                        wait(30)
                     end
                 end)
             end
@@ -168,24 +168,5 @@ local Toggle = Tabs.Event:AddToggle("Event",
     end
 })
 
-local Toggle = Tabs.AutoFarm:AddToggle("AutoFarm", 
-{
-    Title = "AutoRoll", 
-    Description = "",
-    Default = false,
-    Callback = function(state)
-        if state then
-            -- Set Eggs_Roll to true when toggle is on
-            getgenv().Eggs_Roll = true
-            while true do
-                if getgenv().Eggs_Roll == false then return end
-                -- Call the server-side function for rolling eggs
-                game:GetService("ReplicatedStorage").Network.Eggs_Roll:InvokeServer()
-                task.wait()
-            end
-        else
-            -- Set Eggs_Roll to false when toggle is off
-            getgenv().Eggs_Roll = false
-        end
-    end 
-})
+--Event Section
+local Section = Tabs.Event:AddSection("AutoBuy Clover Merchant")
