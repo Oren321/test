@@ -2,14 +2,14 @@ local FredHUb = loadstring(game:HttpGet("https://raw.githubusercontent.com/idont
 
 -- creating the window 
 local Main = FredHUb:Window({ --
-    Title = "Fred Hub | by freaky",
+    Title = "Private Script | By Oren",
 })
 
 -- creating the tab
 local Tab = Main:Tab({
-    Name = "Farming",
+    Name = "AutoFarm",
     tabColor = Color3.fromHex("#71d1f5"),
-    Image = "rbxassetid://10709769841"
+    Image = ""
 })
 
 local EventTab = Main:Tab({
