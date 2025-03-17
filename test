@@ -37,13 +37,13 @@ EventTab:Toggle({
     Name = "Auto Open Pot Of Gold Egg",
     Default = false,
     Callback = function(var)
-        if var then
-            task.spawn(function()
-                local TycoonCmds = require(game:GetService("ReplicatedStorage").Library.Client.TycoonCmds)
-                local Clover = require(game:GetService("ReplicatedStorage").Library.Directory.Tycoons).Clover
-                local CloverEventCmds = require(game:GetService("ReplicatedStorage").Library.Client.CloverEventCmds)
-
-                while var do  -- This will continue running while `var` is true
+        task.spawn(function()
+            local TycoonCmds = require(game:GetService("ReplicatedStorage").Library.Client.TycoonCmds)
+            local Clover = require(game:GetService("ReplicatedStorage").Library.Directory.Tycoons).Clover
+            local CloverEventCmds = require(game:GetService("ReplicatedStorage").Library.Client.CloverEventCmds)
+            
+            while true do
+                if var then
                     local MINE = TycoonCmds.Get(Clover)
 
                     if MINE then
@@ -55,11 +55,11 @@ EventTab:Toggle({
                                 :WaitForChild("Clovers_HatchEgg"):InvokeServer()
                         end
                     end
-
-                    task.wait()
                 end
-            end)
-        end
+
+                task.wait()
+            end
+        end)
     end
 })
 
