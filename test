@@ -104,3 +104,41 @@ EventTab:Toggle({
         end
     end
 })
+
+EventTab:Toggle({
+    Name = "Auto Upgrade Clover Event",
+    Default = false,
+    Callback = function(var)
+        if var then
+            task.spawn(function()
+                local args = { [1] = "Patch_1", [2] = "Clover" }
+                game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Tycoons: Purchase"):InvokeServer(unpack(args))
+
+                local args = { [1] = "Patch_1_Farmer", [2] = "Clover" }
+                game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Tycoons: Purchase"):InvokeServer(unpack(args))
+
+                local args = { [1] = "Patch_1_Speed1", [2] = "Clover" }
+                game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Tycoons: Purchase"):InvokeServer(unpack(args))
+
+                local args = { [1] = "Patch_1_Speed2", [2] = "Clover" }
+                game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Tycoons: Purchase"):InvokeServer(unpack(args))
+
+                local args = { [1] = "Patch_1_Quality1", [2] = "Clover" }
+                game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Tycoons: Purchase"):InvokeServer(unpack(args))
+
+                local args = { [1] = "Patch_1_Quality2", [2] = "Clover" }
+                game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Tycoons: Purchase"):InvokeServer(unpack(args))
+
+                local args = { [1] = "Patch_1_Speed3", [2] = "Clover" }
+                game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Tycoons: Purchase"):InvokeServer(unpack(args))
+
+                local args = { [1] = "Patch_1_Quality3", [2] = "Clover" }
+                game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Tycoons: Purchase"):InvokeServer(unpack(args))
+
+                local args = { [1] = "Patch_2", [2] = "Clover" }
+                game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Tycoons: Purchase"):InvokeServer(unpack(args))
+                task.wait(0.5)
+            end)
+        end
+    end
+})
