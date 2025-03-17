@@ -1,197 +1,118 @@
---UI
-local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
-local SaveManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/SaveManager.lua"))()
-local InterfaceManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/InterfaceManager.lua"))()
+local quake = loadstring(game:HttpGet("https://raw.githubusercontent.com/idonthaveoneatm/Libraries/normal/quake/bundled.lua"))()
 
---Window
-local Window = Fluent:CreateWindow({
-    Title = "Private Script" .. Fluent.Version,
-    SubTitle = "By Fred And Massy",
-    TabWidth = 160,
-    Size = UDim2.fromOffset(580, 460),
-    Acrylic = true, -- The blur may be detectable, setting this to false disables blur entirely
-    Theme = "Darker",
-    MinimizeKey = Enum.KeyCode.LeftControl -- Used when theres no MinimizeKeybind
+local window = quake:Window({
+    Title = "Quake", 
+    isMobile = false,
+    Size = {
+        X = 550,
+        Y = 400
+    },
+    CustomTheme = { -- [OPTIONAL]
+        defaultTab = Color3.fromHex("#a49ae6"),
+        background = Color3.fromRGB(40, 44, 50),
+        secondaryBackground = Color3.fromRGB(49, 56, 66),
+        tertiaryBackground = Color3.fromRGB(57, 63, 75),
+        text = Color3.fromRGB(220,221,225),
+        image = Color3.fromRGB(220,221,225),
+        placeholder = Color3.fromRGB(165,166,169),
+        close = Color3.fromRGB(190, 100, 105)
+    },
+    KeyCode = Enum.KeyCode.T -- [OPTIONAL]
 })
 
---Tabs
-local Tabs = {
-    Event = Window:AddTab({ Title = "Event", Icon = "" }),
-    AutoFarm = Window:AddTab({ Title = "AutoFarm", Icon = "" }),
-}
-
--- Event Toggles
-local Toggle = Tabs.Event:AddToggle("Event", 
-{
-    Title = "Auto Roll Clover Egg", 
-    Description = "",
-    Default = false,
-    Callback = function(state)
-        if state then
-            getgenv().Eggs_Roll2 = true
-            while getgenv().Eggs_Roll2 do
-                game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Clovers_HatchEgg"):InvokeServer()
-                task.wait(16)
-            end
-        else
-            getgenv().Eggs_Roll2 = false
-        end
-    end 
+quake:SetCustomTheme({
+    defaultTab = Color3.fromHex("#a49ae6"),
+    background = Color3.fromRGB(40, 44, 50),
+    secondaryBackground = Color3.fromRGB(49, 56, 66),
+    tertiaryBackground = Color3.fromRGB(57, 63, 75),
+    text = Color3.fromRGB(220,221,225),
+    image = Color3.fromRGB(220,221,225),
+    placeholder = Color3.fromRGB(165,166,169),
+    close = Color3.fromRGB(190, 100, 105)
+})
+-- or
+quake:SetCustomTheme({
+    background = Color3.fromRGB(255, 44, 50)
 })
 
-local Toggle = Tabs.Event:AddToggle("Event", 
-{
-    Title = "Auto Collect Clovers", 
-    Description = "",
-    Default = false,
-    Callback = function(state)
-        if state then
-            getgenv().AutoCollectClover = true
-            while getgenv().AutoCollectClover do
-                local clovers = workspace.__THINGS.Clovers
+window:Notify({
+    Title = "Hey User!",
+    Body = "How are you?",
+    Duration = 0
+})
 
-                local function fireTouchInterest(part)
-                    local playerChar = game.Players.LocalPlayer.Character
-                    local primaryPart = playerChar and playerChar.PrimaryPart or part
-                    firetouchinterest(part, primaryPart, 0)
-                    firetouchinterest(part, primaryPart, 1)
-                end
+local tab1 = window:Tab({
+    Name = "New Tab",
+    tabColor = Color3.fromRGB(180, 240, 67), -- [OPTIONAL]
+    Image = "rbxassetid://10734908793"  -- [OPTIONAL]
+})
 
-                for _, model in pairs(clovers:GetChildren()) do
-                    local part = model:FindFirstChild("Part")
-                    if part then
-                        fireTouchInterest(part)
-                    end
-                end
-                task.wait()
-            end
-        else
-            getgenv().AutoCollectClover = false
-        end
+tab1:Button({
+    Name = "Quake Button",
+    Callback = function()
+        print("Quake Button")
     end
 })
-
-local Toggle = Tabs.Event:AddToggle("Event", 
-{
-    Title = "Auto Collect Hopper Loot", 
-    Description = "",
-    Default = false,
-    Callback = function(state)
-        if state then
-            getgenv().AutoFish = true
-            spawn(function()
-                while getgenv().AutoFish do
-                    game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Clovers_HopperClaim"):InvokeServer()
-                    task.wait(15)
-                end
-            end)
-        else
-            getgenv().AutoFish = false
-        end
-    end 
-})
-
-local Toggle = Tabs.Event:AddToggle("Event", 
-{
-    Title = "Auto Clover Upgrade", 
-    Description = "",
-    Default = false,
-    Callback = function(state)
-        if state then
-            getgenv().AutoCloverUpgrade = true
-            spawn(function()
-                while getgenv().AutoCloverUpgrade do
-                    local args = { [1] = "Patch_1", [2] = "Clover" }
-                    game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Tycoons: Purchase"):InvokeServer(unpack(args))
-
-                    local args = { [1] = "Patch_1_Farmer", [2] = "Clover" }
-                    game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Tycoons: Purchase"):InvokeServer(unpack(args))
-
-                    local args = { [1] = "Patch_1_Speed1", [2] = "Clover" }
-                    game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Tycoons: Purchase"):InvokeServer(unpack(args))
-
-                    local args = { [1] = "Patch_1_Speed2", [2] = "Clover" }
-                    game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Tycoons: Purchase"):InvokeServer(unpack(args))
-
-                    local args = { [1] = "Patch_1_Quality1", [2] = "Clover" }
-                    game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Tycoons: Purchase"):InvokeServer(unpack(args))
-
-                    local args = { [1] = "Patch_1_Quality2", [2] = "Clover" }
-                    game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Tycoons: Purchase"):InvokeServer(unpack(args))
-
-                    local args = { [1] = "Patch_1_Speed3", [2] = "Clover" }
-                    game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Tycoons: Purchase"):InvokeServer(unpack(args))
-
-                    local args = { [1] = "Patch_1_Quality3", [2] = "Clover" }
-                    game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Tycoons: Purchase"):InvokeServer(unpack(args))
-
-                    local args = { [1] = "Patch_2", [2] = "Clover" }
-                    game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Tycoons: Purchase"):InvokeServer(unpack(args))
-                    
-
-                    task.wait(1)
-                end
-            end)
-        else
-            getgenv().AutoCloverUpgrade = false
-        end
-    end 
-})
-
-local Toggle = Tabs.Event:AddToggle("Event", 
-{
-    Title = "AutoBuy Clover Merchant", 
-    Description = "",
-    Default = false,
-    Callback = function(state)
-        if state then
-            if not getgenv().AutoBuyCloverMerchant then
-                getgenv().AutoBuyCloverMerchant = true
-                spawn(function()
-                    while getgenv().AutoBuyCloverMerchant do
-                        for i = 1, 6 do
-                            for j = 1, 3 do
-                                local args = {
-                                    [1] = "CloverMerchant",
-                                    [2] = i
-                                }
-                                game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("CustomMerchants_Purchase"):InvokeServer(unpack(args))
-                            end
-                        end
-                        wait(30)
-                    end
-                end)
-            end
-        else
-            getgenv().AutoBuyCloverMerchant = false
-        end
+tab1:Toggle({
+    Name = "Quake Toggle",
+    Default = false, -- [OPTIONAL]
+    Callback = function(var)
+        print("Quake Toggle", var)
     end
 })
-
---Event Section
-local Section = Tabs.Event:AddSection("AutoUse Clover Power Potion")
-
---Event AutoUse
-local Toggle = Tabs.Event:AddToggle("Event", 
-{
-    Title = "AutoUse Clover Power Potion", 
-    Description = "",
-    Default = false,
-    Callback = function(state)
-        if state then
-            getgenv().Consumables_Consume = true
-            task.spawn(function()
-                while getgenv().Consumables_Consume do
-                    local args = {
-                        [1] = "17674e60b22d4daf9b0e9c88fa7f7f78",
-                        [2] = 5
-                    }
-                    game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Consumables_Consume"):InvokeServer(unpack(args))
-                    task.wait(10)
-                end
-            end)
-        else
-            getgenv().Consumables_Consume = false
-        end
-    end 
+tab1:Slider({
+    Name = "Quake Slider",
+    Min = 0,
+    Max = 100,
+    InitialValue = 0, -- [OPTIONAL]
+    Placement = 0, -- decimal placement [OPTIONAL]
+    Callback = function(var)
+        print("Quake Slider", var)
+    end
 })
+tab1:Dropdown({
+    Name = "Quake Dropdown",
+    Items = {"Apple", "Banana", "Carrot","Dingleberry"},
+    Default = "Apple", -- [OPTIONAL]
+    Multiselect = true, -- [OPTIONAL]
+    Callback = function(var)
+        print("Quake Dropdown", var)
+    end
+})
+tab1:TextBox({
+    Name = "Quake TextBox",
+    Default = "", -- [OPTIONAL]
+    OnLeave = true, -- [OPTIONAL]
+    OnlyNumbers = false, -- [OPTIONAL]
+    Callback = function(var)
+        print("Quake TextBox", var)
+    end
+})
+tab1:Keybind({
+    Name = "Quake Keybind",
+    Default = "E",
+    Callback = function()
+        print("Quake Keybind")
+        quake:ToggleQuake() 
+        -- runs the function for the optional KeyCode variable 
+        -- if you want the user to change how to toggle the interface
+    end
+})
+tab1:ColorPicker({
+    Name = "Quake Color Picker",
+    Color = Color3.fromHex("#a49ae6"),
+    Callback = function(var)
+        print("Quake Color Picker", var)
+    end
+})
+tab1:Label("Quake Label")
+tab1:Section("Quake Section")
+tab1:Paragraph({
+    Title = "Quake Paragraph",
+    Body = "Quake Paragraph"
+})
+local group1 = tab1:Group({
+    Name = "Quake Group",
+    Icon = "rbxassetid://10734950309" -- [OPTIONAL]
+})
+-- Group has all of the other components listed above except for another Group
