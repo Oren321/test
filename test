@@ -1,118 +1,86 @@
-local quake = loadstring(game:HttpGet("https://raw.githubusercontent.com/idonthaveoneatm/Libraries/normal/quake/bundled.lua"))()
+local FredHUb = loadstring(game:HttpGet("https://raw.githubusercontent.com/idonthaveoneatm/Libraries/normal/quake/src"))() -- uh yes we are just getting the library
 
-local window = quake:Window({
-    Title = "Quake", 
-    isMobile = false,
-    Size = {
-        X = 550,
-        Y = 400
-    },
-    CustomTheme = { -- [OPTIONAL]
-        defaultTab = Color3.fromHex("#a49ae6"),
-        background = Color3.fromRGB(40, 44, 50),
-        secondaryBackground = Color3.fromRGB(49, 56, 66),
-        tertiaryBackground = Color3.fromRGB(57, 63, 75),
-        text = Color3.fromRGB(220,221,225),
-        image = Color3.fromRGB(220,221,225),
-        placeholder = Color3.fromRGB(165,166,169),
-        close = Color3.fromRGB(190, 100, 105)
-    },
-    KeyCode = Enum.KeyCode.T -- [OPTIONAL]
+-- creating the window 
+local Main = FredHUb:Window({ --
+    Title = "Fred Hub | by freaky",
 })
 
-quake:SetCustomTheme({
-    defaultTab = Color3.fromHex("#a49ae6"),
-    background = Color3.fromRGB(40, 44, 50),
-    secondaryBackground = Color3.fromRGB(49, 56, 66),
-    tertiaryBackground = Color3.fromRGB(57, 63, 75),
-    text = Color3.fromRGB(220,221,225),
-    image = Color3.fromRGB(220,221,225),
-    placeholder = Color3.fromRGB(165,166,169),
-    close = Color3.fromRGB(190, 100, 105)
-})
--- or
-quake:SetCustomTheme({
-    background = Color3.fromRGB(255, 44, 50)
+-- creating the tab
+local Tab = Main:Tab({
+    Name = "Farming",
+    tabColor = Color3.fromHex("#71d1f5"),
+    Image = "rbxassetid://10709769841"
 })
 
-window:Notify({
-    Title = "Hey User!",
-    Body = "How are you?",
-    Duration = 0
+local EventTab = Main:Tab({
+    Name = "Farming Event",
+    tabColor = Color3.fromHex("#71d1f5"),
+    Image = "rbxassetid://10709769841"
+})
+-- you can add more tab! as neeeded
+
+-- creating the toggle
+Tab:Toggle({
+    Name = "This is a toggle!",
+    Default = false,
+    Callback = function(Value)
+        print(Value)
+    end    
 })
 
-local tab1 = window:Tab({
-    Name = "New Tab",
-    tabColor = Color3.fromRGB(180, 240, 67), -- [OPTIONAL]
-    Image = "rbxassetid://10734908793"  -- [OPTIONAL]
+EventTab:Toggle({
+    Name = "This is a toggle!",
+    Default = false,
+    Callback = function(Value)
+        print(Value)
+    end    
 })
 
-tab1:Button({
-    Name = "Quake Button",
+-- creating the textbox
+Tab:TextBox({
+    Name = "Text Box!",
+    Callback = function(value)
+        print(value)
+    end
+})
+
+
+EventTab:TextBox({
+    Name = "Text Box!",
+    Callback = function(value)
+        print(value)
+    end
+})
+
+-- creating the label
+Tab:Label("Freaky Fred")
+
+Tab:Slider({
+    Name = "Slider!",
+    Min = 1,
+    Max = 99,
+    Step = 1,
+    InitialValue = 1,
+    Callback = function(Value)
+        print(Value)
+    end
+})
+
+-- creating the button
+Tab:Button({
+    Name = "Button!",
     Callback = function()
-        print("Quake Button")
-    end
+          print("button pressed")
+      end    
 })
-tab1:Toggle({
-    Name = "Quake Toggle",
-    Default = false, -- [OPTIONAL]
-    Callback = function(var)
-        print("Quake Toggle", var)
-    end
+
+-- creating the dropdown
+Tab:Dropdown({
+    Name = "Dropdown",
+    Default = "1",
+    Items = {"1", "2"},
+    Multiselect = true, -- So they can select multiple options
+    Callback = function(Value)
+        print(Value)
+    end    
 })
-tab1:Slider({
-    Name = "Quake Slider",
-    Min = 0,
-    Max = 100,
-    InitialValue = 0, -- [OPTIONAL]
-    Placement = 0, -- decimal placement [OPTIONAL]
-    Callback = function(var)
-        print("Quake Slider", var)
-    end
-})
-tab1:Dropdown({
-    Name = "Quake Dropdown",
-    Items = {"Apple", "Banana", "Carrot","Dingleberry"},
-    Default = "Apple", -- [OPTIONAL]
-    Multiselect = true, -- [OPTIONAL]
-    Callback = function(var)
-        print("Quake Dropdown", var)
-    end
-})
-tab1:TextBox({
-    Name = "Quake TextBox",
-    Default = "", -- [OPTIONAL]
-    OnLeave = true, -- [OPTIONAL]
-    OnlyNumbers = false, -- [OPTIONAL]
-    Callback = function(var)
-        print("Quake TextBox", var)
-    end
-})
-tab1:Keybind({
-    Name = "Quake Keybind",
-    Default = "E",
-    Callback = function()
-        print("Quake Keybind")
-        quake:ToggleQuake() 
-        -- runs the function for the optional KeyCode variable 
-        -- if you want the user to change how to toggle the interface
-    end
-})
-tab1:ColorPicker({
-    Name = "Quake Color Picker",
-    Color = Color3.fromHex("#a49ae6"),
-    Callback = function(var)
-        print("Quake Color Picker", var)
-    end
-})
-tab1:Label("Quake Label")
-tab1:Section("Quake Section")
-tab1:Paragraph({
-    Title = "Quake Paragraph",
-    Body = "Quake Paragraph"
-})
-local group1 = tab1:Group({
-    Name = "Quake Group",
-    Icon = "rbxassetid://10734950309" -- [OPTIONAL]
-})
--- Group has all of the other components listed above except for another Group
