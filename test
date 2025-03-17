@@ -45,7 +45,11 @@ EventTab:Toggle({
                 local Clover = require(game:GetService("ReplicatedStorage").Library.Directory.Tycoons).Clover
                 local CloverEventCmds = require(game:GetService("ReplicatedStorage").Library.Client.CloverEventCmds)
 
-                while var do
+                while true do
+                    if not var then
+                        break  -- Exit the loop when the toggle is turned off
+                    end
+
                     local MINE = TycoonCmds.Get(Clover)
 
                     if MINE then
