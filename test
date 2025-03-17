@@ -92,3 +92,15 @@ EventTab:Toggle({
         end
     end
 })
+
+EventTab:Toggle({
+    Name = "Auto Collect Hoppers Loot",
+    Default = false,
+    Callback = function(var)
+        AutoCollectHoppersLootEnabled = var
+        while AutoCollectHoppersLootEnabled do
+            game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Clovers_HopperClaim"):InvokeServer()
+            task.wait(30)
+        end
+    end
+})
