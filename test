@@ -1,86 +1,29 @@
-local FredHUb = loadstring(game:HttpGet("https://raw.githubusercontent.com/idonthaveoneatm/Libraries/normal/quake/src"))() -- uh yes we are just getting the library
+local FredHUb = loadstring(game:HttpGet("https://raw.githubusercontent.com/idonthaveoneatm/Libraries/normal/quake/src"))()
 
 -- creating the window 
 local Main = FredHUb:Window({ --
     Title = "Private Script | By Oren",
 })
+CustomTheme = { -- [OPTIONAL]
+defaultTab = Color3.fromHex("#a49ae6"),
+background = Color3.fromRGB(40, 44, 50),
+secondaryBackground = Color3.fromRGB(49, 56, 66),
+tertiaryBackground = Color3.fromRGB(57, 63, 75),
+text = Color3.fromRGB(220,221,225),
+image = Color3.fromRGB(220,221,225),
+placeholder = Color3.fromRGB(165,166,169),
+close = Color3.fromRGB(190, 100, 105)
+},
 
 -- creating the tab
 local Tab = Main:Tab({
     Name = "AutoFarm",
     tabColor = Color3.fromHex("#71d1f5"),
-    Image = ""
+    Image = "rbxassetid://10709811445"
 })
 
 local EventTab = Main:Tab({
-    Name = "Farming Event",
+    Name = "Event",
     tabColor = Color3.fromHex("#71d1f5"),
     Image = "rbxassetid://10709769841"
-})
--- you can add more tab! as neeeded
-
--- creating the toggle
-Tab:Toggle({
-    Name = "This is a toggle!",
-    Default = false,
-    Callback = function(Value)
-        print(Value)
-    end    
-})
-
-EventTab:Toggle({
-    Name = "This is a toggle!",
-    Default = false,
-    Callback = function(Value)
-        print(Value)
-    end    
-})
-
--- creating the textbox
-Tab:TextBox({
-    Name = "Text Box!",
-    Callback = function(value)
-        print(value)
-    end
-})
-
-
-EventTab:TextBox({
-    Name = "Text Box!",
-    Callback = function(value)
-        print(value)
-    end
-})
-
--- creating the label
-Tab:Label("Freaky Fred")
-
-Tab:Slider({
-    Name = "Slider!",
-    Min = 1,
-    Max = 99,
-    Step = 1,
-    InitialValue = 1,
-    Callback = function(Value)
-        print(Value)
-    end
-})
-
--- creating the button
-Tab:Button({
-    Name = "Button!",
-    Callback = function()
-          print("button pressed")
-      end    
-})
-
--- creating the dropdown
-Tab:Dropdown({
-    Name = "Dropdown",
-    Default = "1",
-    Items = {"1", "2"},
-    Multiselect = true, -- So they can select multiple options
-    Callback = function(Value)
-        print(Value)
-    end    
 })
