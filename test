@@ -1,29 +1,94 @@
 local FredHUb = loadstring(game:HttpGet("https://raw.githubusercontent.com/idonthaveoneatm/Libraries/normal/quake/src"))()
 
--- creating the window 
-local Main = FredHUb:Window({ --
+--Window
+local Main = FredHUb:Window({
     Title = "Private Script | By Oren",
 })
-CustomTheme = { -- [OPTIONAL]
-defaultTab = Color3.fromHex("#a49ae6"),
-background = Color3.fromRGB(40, 44, 50),
-secondaryBackground = Color3.fromRGB(49, 56, 66),
-tertiaryBackground = Color3.fromRGB(57, 63, 75),
-text = Color3.fromRGB(220,221,225),
-image = Color3.fromRGB(220,221,225),
-placeholder = Color3.fromRGB(165,166,169),
-close = Color3.fromRGB(190, 100, 105)
-},
 
--- creating the tab
-local Tab = Main:Tab({
+--AutoFarm
+local AutoFarmTab = Main:Tab({
     Name = "AutoFarm",
     tabColor = Color3.fromHex("#71d1f5"),
-    Image = "rbxassetid://10709811445"
+    Image = "rbxassetid://10709798174"
 })
 
+local AutoRollEnabled = false
+
+AutoFarmTab:Toggle({
+    Name = "AutoRoll",
+    Default = false,
+    Callback = function(var)
+        AutoRollEnabled = var
+        while AutoRollEnabled do
+            game:GetService("ReplicatedStorage").Network.Eggs_Roll:InvokeServer()
+            task.wait()
+        end
+    end
+})
+
+--Event
 local EventTab = Main:Tab({
     Name = "Event",
     tabColor = Color3.fromHex("#71d1f5"),
-    Image = "rbxassetid://10709769841"
+    Image = "rbxassetid://10709798174"
+})
+
+EventTab:Toggle({
+    Name = "Auto Open Pot Of Gold Egg",
+    Default = false,
+    Callback = function(var)
+
+        if var then
+            task.spawn(function()
+                local TycoonCmds = require(game:GetService("ReplicatedStorage").Library.Client.TycoonCmds)
+                local Clover = require(game:GetService("ReplicatedStorage").Library.Directory.Tycoons).Clover
+                local CloverEventCmds = require(game:GetService("ReplicatedStorage").Library.Client.CloverEventCmds)
+
+                while var do
+                    local MINE = TycoonCmds.Get(Clover)
+
+                    if MINE then
+                        local currentPoints = CloverEventCmds.GetEggPoints(MINE)
+                        local maxPoints = CloverEventCmds.GetMaxEggPoints(MINE)
+
+                        if currentPoints >= maxPoints then
+                            game:GetService("ReplicatedStorage"):WaitForChild("Network")
+                                :WaitForChild("Clovers_HatchEgg"):InvokeServer()
+                        end
+                    end
+
+                    task.wait()
+                end
+            end)
+        end
+    end
+})
+
+EventTab:Toggle({
+    Name = "Auto Collect Clovers",
+    Default = false,
+    Callback = function(var)
+        if var then
+            task.spawn(function()
+                local clovers = workspace.__THINGS.Clovers
+
+                local function fireTouchInterest(part)
+                    local playerChar = game.Players.LocalPlayer.Character
+                    local primaryPart = playerChar and playerChar.PrimaryPart or part
+                    firetouchinterest(part, primaryPart, 0)
+                    firetouchinterest(part, primaryPart, 1)
+                end
+
+                while var do
+                    for _, model in pairs(clovers:GetChildren()) do
+                        local part = model:FindFirstChild("Part")
+                        if part then
+                            fireTouchInterest(part)
+                        end
+                    end
+                    task.wait()
+                end
+            end)
+        end
+    end
 })
