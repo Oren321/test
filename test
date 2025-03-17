@@ -33,11 +33,16 @@ local EventTab = Main:Tab({
     Image = "rbxassetid://10709798174"
 })
 
+local isToggled = false  -- This will track the toggle state globally
+
 EventTab:Toggle({
     Name = "Quake Toggle",  -- Change the name to fit your context
     Default = false,        -- You can adjust the default as needed
     Callback = function(var)
         print("Quake Toggle", var)
+
+        -- Update the isToggled variable
+        isToggled = var
 
         if var then
             task.spawn(function()
@@ -45,11 +50,8 @@ EventTab:Toggle({
                 local Clover = require(game:GetService("ReplicatedStorage").Library.Directory.Tycoons).Clover
                 local CloverEventCmds = require(game:GetService("ReplicatedStorage").Library.Client.CloverEventCmds)
 
-                while true do
-                    if not var then
-                        break  -- Exit the loop when the toggle is turned off
-                    end
-
+                -- Keep looping and checking until isToggled is false
+                while isToggled do
                     local MINE = TycoonCmds.Get(Clover)
 
                     if MINE then
@@ -68,7 +70,6 @@ EventTab:Toggle({
         end
     end
 })
-
 
 EventTab:Toggle({
     Name = "Auto Collect Clovers",
