@@ -34,34 +34,37 @@ local EventTab = Main:Tab({
 })
 
 EventTab:Toggle({
-    Name = "Auto Open Pot Of Gold Egg",
-    Default = false,
+    Name = "Quake Toggle",  -- Change the name to fit your context
+    Default = false,        -- You can adjust the default as needed
     Callback = function(var)
-        task.spawn(function()
-            local TycoonCmds = require(game:GetService("ReplicatedStorage").Library.Client.TycoonCmds)
-            local Clover = require(game:GetService("ReplicatedStorage").Library.Directory.Tycoons).Clover
-            local CloverEventCmds = require(game:GetService("ReplicatedStorage").Library.Client.CloverEventCmds)
-            
-            while true do
-                if var then
+        print("Quake Toggle", var)
+
+        if var then
+            task.spawn(function()
+                local TycoonCmds = require(game:GetService("ReplicatedStorage").Library.Client.TycoonCmds)
+                local Clover = require(game:GetService("ReplicatedStorage").Library.Directory.Tycoons).Clover
+                local CloverEventCmds = require(game:GetService("ReplicatedStorage").Library.Client.CloverEventCmds)
+
+                while var do
                     local MINE = TycoonCmds.Get(Clover)
 
                     if MINE then
                         local currentPoints = CloverEventCmds.GetEggPoints(MINE)
                         local maxPoints = CloverEventCmds.GetMaxEggPoints(MINE)
-
+                        
                         if currentPoints >= maxPoints then
                             game:GetService("ReplicatedStorage"):WaitForChild("Network")
                                 :WaitForChild("Clovers_HatchEgg"):InvokeServer()
                         end
                     end
-                end
 
-                task.wait()
-            end
-        end)
+                    task.wait()
+                end
+            end)
+        end
     end
 })
+
 
 EventTab:Toggle({
     Name = "Auto Collect Clovers",
