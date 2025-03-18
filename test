@@ -158,6 +158,8 @@ EventTab:Toggle({
 })
 
 --Fish Tab
+FishTab:Label("Fishing!")
+
 local FishTab = Window:Tab({
     Name = "Auto Fish",
     tabColor = Color3.fromRGB(255, 105, 180),
@@ -188,7 +190,6 @@ FishTab:Toggle({
     Default = false,
     Callback = function(var)
         isToggled = var
-        
         if isToggled then
             while isToggled do
                 local args = {
@@ -196,9 +197,23 @@ FishTab:Toggle({
                 }
                 game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Fishing_Fish"):InvokeServer(unpack(args))
                 game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Fishing_Success"):FireServer()
-                
-                task.wait(1)
+                task.wait()
             end
+        end
+    end
+})
+
+local isToggled = false
+
+FishTab:Toggle({
+    Name = "Claim Fishing Storage Loot",
+    Default = false,
+    Callback = function(var)
+        isToggled = var
+        if isToggled then
+        while isToggled do
+            game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Fishing_FishermanClaim"):InvokeServer()
+            task.wait()
         end
     end
 })
