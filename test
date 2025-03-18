@@ -162,15 +162,14 @@ local FishTab = Window:Tab({
     Name = "Auto Fish",
     tabColor = Color3.fromRGB(255, 105, 180),
     Image = "rbxassetid://10709798174"
- })
+})
 
- local FishingSpots = {
+local FishingSpots = {
     "Default",
     "Ice",
     "Kraken",
     "Corrupted",
 }
-
 
 FishTab:Dropdown({
     Name = "Select Fishing Spot",
@@ -182,22 +181,24 @@ FishTab:Dropdown({
     end
 })
 
-local isToggle = false
+local isToggled = false
 
 FishTab:Toggle({
     Name = "Auto Fish",
     Default = false,
     Callback = function(var)
-      isToggled = var
+        isToggled = var
         
-        while isToggled do
-            local args = {
-                [1] = selectedFishingSpot
-            }
-            game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Fishing_Fish"):InvokeServer(unpack(args))
-            game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Fishing_Success"):FireServer()
-            
-            task.wait()
+        if isToggled then
+            while isToggled do
+                local args = {
+                    [1] = selectedFishingSpot
+                }
+                game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Fishing_Fish"):InvokeServer(unpack(args))
+                game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Fishing_Success"):FireServer()
+                
+                task.wait(1)
+            end
         end
     end
 })
