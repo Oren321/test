@@ -200,3 +200,17 @@ FishTab:Toggle({
         end
     end
 })
+
+local isToggled = false
+
+FishTab:Toggle({
+    Name = "Claim Fishing Storage Loot",
+    Default = false,
+    Callback = function(var)
+        isToggled = var
+        while isToggled do
+            game:GetService("ReplicatedStorage"):WaitForChild("Network"):WaitForChild("Fishing_FishermanClaim"):InvokeServer()
+            task.wait(5)
+        end
+    end
+})
