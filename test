@@ -171,29 +171,6 @@ local FishTab = Window:Tab({
     "Corrupted",
 }
 
-FishTab:Dropdown({
-    Name = "Select Fishing Spot",
-    Default = "Default",
-    Items = FishingSpots,
-    Multiselect = false,
-    Callback = function(Value)
-        selectedFishingSpot = Value
-    end
-})
-
---Fish Tab
-local FishTab = Window:Tab({
-    Name = "Auto Fish",
-    tabColor = Color3.fromRGB(255, 105, 180),
-    Image = "rbxassetid://10709798174"
- })
-
- local FishingSpots = {
-    "Default",
-    "Ice",
-    "Kraken",
-    "Corrupted",
-}
 
 FishTab:Dropdown({
     Name = "Select Fishing Spot",
