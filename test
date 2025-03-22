@@ -325,32 +325,155 @@ MiniGames:Toggle({
     end
 })
 
-if MiniGames then
-    MiniGames:Dropdown({
-        Name = "Quake Dropdown",
-        Items = {"1 | Royal Booth", "Apple", "Banana", "Carrot", "Dingleberry"},
-        Default = "Apple",
-        Multiselect = false,
-        Callback = function(selectedItems)
-            selectedBoothId, _ = getBoothIdAndCFrame(selectedItems[1])
-            print("Selected Booth ID: " .. tostring(selectedBoothId))
-            if thievingEnabled and selectedBoothId then
-                task.spawn(thieveAtBooth)
-            end
-        end
-    })
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local ThievingCmds = require(ReplicatedStorage.Library.Client.ThievingCmds)
 
-    MiniGames:Toggle({
-        Name = "Auto Thieve",
-        Default = false,
-        Callback = function(var)
-            thievingEnabled = var
-            print("Auto Thieve Toggle", var)
-            if thievingEnabled and selectedBoothId then
-                task.spawn(thieveAtBooth)
+-- Convert stored positions into actual CFrame objects
+local BoothAndCFrame = {
+    ["1 | Royal Booth"] = CFrame.new(
+        349.891266, 16.8304901, 37.4022408,
+        -0.972637773, -4.03870763e-05, 0.23232691,
+        4.03870763e-05, 0.99999994, 0.000342917949,
+        -0.23232691, 0.000342917949, -0.972637653
+    )
+}
+
+local thievingEnabled = false
+local selectedBoothId = nil
+
+local function getBoothIdAndCFrame(boothName)
+    if BoothAndCFrame[boothName] then
+        return boothName, BoothAndCFrame[boothName]
+    end
+    return nil, nil
+end
+
+local function thieveAtBooth()
+    while thievingEnabled and selectedBoothId do
+        local args = {selectedBoothId}
+        ReplicatedStorage:WaitForChild("Network"):WaitForChild("Thieving_Thieve"):InvokeServer(unpack(args))
+        task.wait(1) -- Adjust delay as needed
+    end
+end
+
+local foundObjects = {}
+
+for _, model in pairs(workspace:GetDescendants()) do
+    if model:IsA("Model") then
+        local thievingObject = ThievingCmds.GetObjectByModel(model)
+        if thievingObject and not foundObjects[thievingObject] then
+            foundObjects[thievingObject] = true
+            if thievingObject._id and thievingObject._cframe then
+                print("_id: " .. tostring(thievingObject._id))
+                print("_cframe: " .. tostring(thievingObject._cframe))
             end
         end
-    })
-else
-    warn("MiniGames is not initialized.")
+    end
 end
+
+MiniGames:Dropdown({
+    Name = "Quake Dropdown",
+    Items = {"1 | Royal Booth", "Apple", "Banana", "Carrot", "Dingleberry"},
+    Default = "Apple",
+    Multiselect = false,
+    Callback = function(selectedItems)
+        selectedBoothId, _ = getBoothIdAndCFrame(selectedItems[1])
+        print("Selected Booth ID: " .. tostring(selectedBoothId))
+        if thievingEnabled and selectedBoothId then
+            task.spawn(thieveAtBooth)
+        end
+    end
+})
+
+MiniGames:Toggle({
+    Name = "Auto Thieve",
+    Default = false,
+    Callback = function(var)
+        thievingEnabled = var
+        print("Auto Thieve Toggle", var)
+        if thievingEnabled and selectedBoothId then
+            task.spawn(thieveAtBooth)
+        end
+    end
+})
+
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local ThievingCmds = require(ReplicatedStorage.Library.Client.ThievingCmds)
+
+-- Convert stored positions into actual CFrame objects
+local BoothAndCFrame = {
+    ["1 | Royal Booth"] = CFrame.new(
+        193.854767, 2.53966188, 1.27028322,
+        -0.30631876, 0.000273115147, -0.951929271,
+        -0.000133587222, 0.99999994, 0.000329893635,
+        0.951929271, 0.00022821805, -0.306318641
+    )
+}
+
+local thievingEnabled = false
+local selectedBoothId = nil
+
+local function getBoothIdAndCFrame(boothName)
+    if BoothAndCFrame[boothName] then
+        return boothName, BoothAndCFrame[boothName]
+    end
+    return nil, nil
+end
+
+local function thieveAtBooth()
+    while thievingEnabled and selectedBoothId do
+        local args = {selectedBoothId}
+        ReplicatedStorage:WaitForChild("Network"):WaitForChild("Thieving_Thieve"):InvokeServer(unpack(args))
+        task.wait(1) -- Adjust delay as needed
+    end
+end
+
+local foundObjects = {}
+
+for _, model in pairs(workspace:GetDescendants()) do
+    if model:IsA("Model") then
+        local thievingObject = ThievingCmds.GetObjectByModel(model)
+        if thievingObject and not foundObjects[thievingObject] then
+            foundObjects[thievingObject] = true
+            if thievingObject._id and thievingObject._cframe then
+                print("_id: " .. tostring(thievingObject._id))
+                print("_cframe: " .. tostring(thievingObject._cframe))
+            end
+        end
+    end
+end
+
+MiniGames:Dropdown({
+    Name = "Quake Dropdown",
+    Items = {"1 | Royal Booth", "Apple", "Banana", "Carrot", "Dingleberry"},
+    Default = "Apple",
+    Multiselect = false,
+    Callback = function(selectedItems)
+        if selectedItems and #selectedItems > 0 then
+            local selectedBooth = selectedItems[1]
+            selectedBoothId, _ = getBoothIdAndCFrame(selectedBooth)
+            if selectedBoothId then
+                print("Selected Booth ID: " .. tostring(selectedBoothId))
+                if thievingEnabled then
+                    task.spawn(thieveAtBooth)
+                end
+            else
+                print("Invalid Booth selection!")
+            end
+        else
+            print("No booth selected!")
+        end
+    end
+})
+
+MiniGames:Toggle({
+    Name = "Auto Thieve",
+    Default = false,
+    Callback = function(var)
+        thievingEnabled = var
+        print("Auto Thieve Toggle", var)
+        if thievingEnabled and selectedBoothId then
+            task.spawn(thieveAtBooth)
+        end
+    end
+})
